@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { tools } from '@/lib/tools';
-import { Combine, Scissors, Image as ImageIcon, Minimize2, FileText, FileEdit } from 'lucide-react';
+import { Combine, Scissors, Image as ImageIcon, Minimize2, FileText, FileEdit, Stamp, Lock } from 'lucide-react';
 
 function getToolIcon(slug: string) {
   switch (slug) {
@@ -10,6 +10,8 @@ function getToolIcon(slug: string) {
     case 'compress-pdf': return <Minimize2 className="h-6 w-6 text-slate-950" />;
     case 'word-to-pdf': return <FileText className="h-6 w-6 text-slate-950" />;
     case 'pdf-to-word': return <FileEdit className="h-6 w-6 text-slate-950" />;
+    case 'watermark-pdf': return <Stamp className="h-6 w-6 text-slate-950" />;
+    case 'protect-pdf': return <Lock className="h-6 w-6 text-slate-950" />;
     default: return <FileText className="h-6 w-6 text-slate-950" />;
   }
 }

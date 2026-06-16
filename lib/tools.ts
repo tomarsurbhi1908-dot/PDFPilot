@@ -4,7 +4,9 @@ export type ToolSlug =
   | 'image-to-pdf'
   | 'compress-pdf'
   | 'word-to-pdf'
-  | 'pdf-to-word';
+  | 'pdf-to-word'
+  | 'watermark-pdf'
+  | 'protect-pdf';
 
 export type ToolConfig = {
   slug: ToolSlug;
@@ -19,6 +21,8 @@ export type ToolConfig = {
   output: string;
   needsRanges?: boolean;
   needsQuality?: boolean;
+  needsText?: boolean;
+  needsPassword?: boolean;
   experimental?: boolean;
 };
 
@@ -97,6 +101,32 @@ export const tools: ToolConfig[] = [
     helpText: 'Requires Python and pdf2docx installed. Layout-perfect conversion is hard.',
     output: 'converted.docx',
     experimental: true
+  },
+  {
+    slug: 'watermark-pdf',
+    title: 'Watermark PDF',
+    shortTitle: 'Watermark',
+    description: 'Stamp an image or text over your PDF in seconds.',
+    accept: 'application/pdf',
+    multiple: false,
+    endpoint: '/api/tools/watermark-pdf',
+    badge: 'Custom text',
+    helpText: 'Enter the text you want to use as a watermark.',
+    output: 'watermarked.pdf',
+    needsText: true
+  },
+  {
+    slug: 'protect-pdf',
+    title: 'Protect PDF',
+    shortTitle: 'Protect',
+    description: 'Encrypt your PDF with a password to prevent unauthorized access.',
+    accept: 'application/pdf',
+    multiple: false,
+    endpoint: '/api/tools/protect-pdf',
+    badge: 'Secure',
+    helpText: 'Enter a strong password to encrypt the PDF file.',
+    output: 'protected.pdf',
+    needsPassword: true
   }
 ];
 

@@ -16,6 +16,8 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
   const [files, setFiles] = useState<File[]>([]);
   const [ranges, setRanges] = useState('1');
   const [quality, setQuality] = useState('ebook');
+  const [text, setText] = useState('CONFIDENTIAL');
+  const [password, setPassword] = useState('');
   const [status, setStatus] = useState<'idle' | 'uploading' | 'ready' | 'error'>('idle');
   const [result, setResult] = useState<Result | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -58,6 +60,8 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
     }
     if (tool.needsRanges) form.append('ranges', ranges);
     if (tool.needsQuality) form.append('quality', quality);
+    if (tool.needsText) form.append('text', text);
+    if (tool.needsPassword) form.append('password', password);
 
     try {
       const response = await fetch(tool.endpoint, {
@@ -139,7 +143,7 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
         </div>
       )}
 
-      {(tool.needsRanges || tool.needsQuality) && (
+      {(tool.needsRanges || tool.needsQuality || tool.needsText || tool.needsPassword) && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {tool.needsRanges && (
             <label className="block rounded-2xl border border-white/10 bg-slate-950/50 p-4">
@@ -165,6 +169,29 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
                 <option value="printer">High quality</option>
                 <option value="prepress">Best quality</option>
               </select>
+            </label>
+          )}
+          {tool.needsText && (
+            <label className="block rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+              <span className="text-sm font-bold text-slate-200">Watermark text</span>
+              <input
+                value={text}
+                onChange={(event) => setText(event.target.value)}
+                placeholder="CONFIDENTIAL"
+                className="mt-3 w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white outline-none focus:border-indigo-300/60"
+              />
+            </label>
+          )}
+          {tool.needsPassword && (
+            <label className="block rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+              <span className="text-sm font-bold text-slate-200">Password</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Enter strong password"
+                className="mt-3 w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white outline-none focus:border-indigo-300/60"
+              />
             </label>
           )}
         </div>
