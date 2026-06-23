@@ -14,36 +14,37 @@ export function SiteHeader({
   ctaLabel = 'Start now',
 }: SiteHeaderProps) {
   return (
-    <div className="sticky top-4 z-50 flex justify-center px-4">
-      <header className="w-full max-w-6xl rounded-2xl border border-white/60 bg-white/80 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15),_0_2px_6px_rgba(0,0,0,0.05),_inset_0_1px_0_rgba(255,255,255,0.8)] ring-1 ring-slate-900/5 backdrop-blur-xl">
-        <div className="mx-auto flex min-h-16 items-center justify-between gap-4 px-4 py-2 sm:px-6">
+    <div className="sticky top-4 z-50 mx-auto flex w-full max-w-6xl justify-center px-4">
+      <header className="rainbow-frame relative w-full overflow-hidden rounded-2xl bg-white/80 ring-1 ring-slate-900/5 backdrop-blur-xl">
+        <div className="h-1 bg-[linear-gradient(100deg,#ff2d55,#ff8a00,#facc15,#22c55e,#06b6d4,#6366f1,#d946ef)]" />
+        <div className="mx-auto flex min-h-16 items-center justify-between gap-3 px-4 py-2 sm:gap-4 sm:px-6">
           <Link href="/" className="group flex min-w-0 items-center gap-3 transition-transform duration-300 hover:scale-[1.02]">
             <BrandMark size="sm" />
-            <span className="truncate text-xl font-black tracking-tight text-slate-800" style={{ textShadow: '1px 1px 0px #cbd5e1, 2px 2px 0px #94a3b8' }}>
+            <span className="truncate text-xl font-black text-slate-800" style={{ textShadow: '1px 1px 0px #cbd5e1, 2px 2px 0px #94a3b8' }}>
               PDFpaglu
             </span>
           </Link>
 
           <nav aria-label="Primary navigation" className="hidden items-center gap-1 md:flex">
-            <Link href={toolsHref} className="rounded-xl px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950">
+            <Link href={toolsHref} className="rounded-xl px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-white/80 hover:text-rose-600">
               Tools
             </Link>
-            <Link href="/tools/merge-pdf" className="rounded-xl px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950">
+            <Link href="/tools/merge-pdf" className="rounded-xl px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-white/80 hover:text-orange-600">
               Merge
             </Link>
-            <Link href="/tools/compress-pdf" className="rounded-xl px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950">
+            <Link href="/tools/compress-pdf" className="rounded-xl px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-white/80 hover:text-emerald-600">
               Compress
             </Link>
-            <Link href="/tools/pdf-to-word" className="rounded-xl px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950">
+            <Link href="/tools/pdf-to-word" className="rounded-xl px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-white/80 hover:text-indigo-600">
               Convert
             </Link>
           </nav>
 
           <Link
             href={ctaHref}
-            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-gradient-to-b from-white to-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 shadow-[0_2px_10px_rgba(0,0,0,0.05),_0_1px_1px_rgba(0,0,0,0.05),_inset_0_1px_0_rgba(255,255,255,1)] transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_8px_20px_rgba(0,0,0,0.1),_0_2px_5px_rgba(0,0,0,0.05)] active:translate-y-0 active:shadow-sm sm:px-5"
+            className="rainbow-button inline-flex max-w-[44vw] shrink-0 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_34px_-20px_rgba(99,102,241,0.9)] active:translate-y-0 sm:max-w-none sm:px-5"
           >
-            <span>{ctaLabel}</span>
+            <span className="truncate">{ctaLabel}</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>

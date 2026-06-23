@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
+import { ArrowDown, ArrowUp, UploadCloud, X } from 'lucide-react';
 import type { ToolConfig } from '@/lib/tools';
 import { prettyBytes } from '@/lib/utils';
 
@@ -103,7 +104,7 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 p-4 shadow-2xl backdrop-blur-xl sm:p-8">
+    <section className="rainbow-frame overflow-hidden rounded-2xl p-4 sm:p-8">
       <div
         onDragOver={(event) => { event.preventDefault(); setIsDragOver(true); }}
         onDragEnter={() => setIsDragOver(true)}
@@ -115,11 +116,10 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
         }}
         className={`relative rounded-xl border-2 border-dashed p-10 text-center transition-all ${
           isDragOver
-            ? 'border-indigo-500 bg-indigo-50/80 shadow-inner'
-            : 'border-indigo-200/60 bg-slate-50/50 hover:border-indigo-400 hover:bg-slate-50/80'
+            ? 'border-fuchsia-400 bg-white/90 shadow-inner'
+            : 'border-white/80 bg-white/70 hover:border-cyan-300 hover:bg-white/80'
         }`}
       >
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-50/50 via-white/0 to-white/0" />
         <input
           ref={inputRef}
           type="file"
@@ -128,21 +128,19 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
           className="hidden"
           onChange={(event) => onFiles(event.target.files)}
         />
-        <div className={`mx-auto mb-6 grid h-20 w-20 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-xl transition-all ${isDragOver ? '-translate-y-2 scale-110 shadow-indigo-500/30' : 'shadow-indigo-500/20'}`}>
-          <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-          </svg>
+        <div className={`rainbow-button mx-auto mb-6 grid h-20 w-20 place-items-center rounded-2xl transition-all ${isDragOver ? '-translate-y-2 scale-110' : ''}`}>
+          <UploadCloud className="h-10 w-10" aria-hidden="true" />
         </div>
-        <h2 className="text-3xl font-black tracking-tight text-slate-900">{isDragOver ? 'Drop to upload!' : 'Drop files here'}</h2>
+        <h2 className="text-3xl font-black text-slate-900">{isDragOver ? 'Drop to upload!' : 'Drop files here'}</h2>
         <p className="mx-auto mt-4 max-w-xl text-base leading-6 text-slate-600">{tool.helpText}</p>
-        <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white px-3 py-1 text-xs font-semibold text-slate-500 shadow-sm">
+        <div className="rainbow-chip mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-slate-600">
           Max size: {maxSize} MB
         </div>
         <div className="mt-8">
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="rounded-full bg-slate-900 px-8 py-3.5 font-bold text-white shadow-md transition hover:scale-105 hover:bg-slate-800"
+            className="rainbow-button rounded-full px-8 py-3.5 font-bold transition hover:scale-105"
           >
             Choose files
           </button>
@@ -150,7 +148,7 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
       </div>
 
       {files.length > 0 && (
-        <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <div className="premium-card mt-6 rounded-lg p-4">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="font-black text-slate-900">Selected files</h3>
             <button type="button" className="text-sm text-slate-500 hover:text-slate-900" onClick={() => setFiles([])}>
@@ -159,7 +157,7 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
           </div>
           <div className="space-y-3">
             {files.map((file, index) => (
-              <div key={`${file.name}-${index}`} className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+              <div key={`${file.name}-${index}`} className="flex flex-col gap-3 rounded-lg border border-white/70 bg-white/80 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-semibold text-slate-900">{index + 1}. {file.name}</p>
                   <p className="text-sm text-slate-500">{prettyBytes(file.size)}</p>
@@ -167,16 +165,22 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
                 <div className="flex gap-2">
                   {tool.slug === 'merge-pdf' && (
                     <>
-                      <button type="button" className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" onClick={() => moveFile(index, -1)}>Up</button>
-                      <button type="button" className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" onClick={() => moveFile(index, 1)}>Down</button>
+                      <button type="button" title="Move up" aria-label={`Move ${file.name} up`} className="grid h-10 w-10 place-items-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50" onClick={() => moveFile(index, -1)}>
+                        <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                      <button type="button" title="Move down" aria-label={`Move ${file.name} down`} className="grid h-10 w-10 place-items-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:translate-y-0.5 hover:bg-slate-50" onClick={() => moveFile(index, 1)}>
+                        <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                      </button>
                     </>
                   )}
                   <button
                     type="button"
-                    className="rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                    title="Remove"
+                    aria-label={`Remove ${file.name}`}
+                    className="grid h-10 w-10 place-items-center rounded-lg border border-rose-200 bg-white text-rose-600 transition hover:bg-rose-50"
                     onClick={() => setFiles((current) => current.filter((_, fileIndex) => fileIndex !== index))}
                   >
-                    Remove
+                    <X className="h-4 w-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -188,23 +192,23 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
       {(tool.needsRanges || tool.needsQuality || tool.needsText || tool.needsPassword || tool.needsSignature) && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {tool.needsRanges && (
-            <label className="block rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <label className="premium-card block rounded-lg p-4">
               <span className="text-sm font-bold text-slate-700">Pages to extract</span>
               <input
                 value={ranges}
                 onChange={(event) => setRanges(event.target.value)}
                 placeholder="1-3,5"
-                className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-indigo-400"
+                className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-cyan-400"
               />
             </label>
           )}
           {tool.needsQuality && (
-            <label className="block rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <label className="premium-card block rounded-lg p-4">
               <span className="text-sm font-bold text-slate-700">Compression quality</span>
               <select
                 value={quality}
                 onChange={(event) => setQuality(event.target.value)}
-                className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-indigo-400"
+                className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-cyan-400"
               >
                 <option value="screen">Smallest file</option>
                 <option value="ebook">Balanced</option>
@@ -214,30 +218,30 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
             </label>
           )}
           {tool.needsText && (
-            <label className="block rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <label className="premium-card block rounded-lg p-4">
               <span className="text-sm font-bold text-slate-700">Watermark text</span>
               <input
                 value={text}
                 onChange={(event) => setText(event.target.value)}
                 placeholder="CONFIDENTIAL"
-                className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-indigo-400"
+                className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-cyan-400"
               />
             </label>
           )}
           {tool.needsPassword && (
-            <label className="block rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <label className="premium-card block rounded-lg p-4">
               <span className="text-sm font-bold text-slate-700">Password</span>
               <input
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter strong password"
-                className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-indigo-400"
+                className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-cyan-400"
               />
             </label>
           )}
           {tool.needsSignature && (
-            <div className="block rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <div className="premium-card block rounded-lg p-4">
               <span className="text-sm font-bold text-slate-700">Signature Image</span>
               <input
                 ref={signatureRef}
@@ -256,7 +260,7 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
                 <button
                   type="button"
                   onClick={() => signatureRef.current?.click()}
-                  className="text-sm font-bold text-indigo-600 hover:text-indigo-700 whitespace-nowrap"
+                  className="rainbow-text whitespace-nowrap text-sm font-bold"
                 >
                   {signatureFile ? 'Change' : 'Upload'}
                 </button>
@@ -275,7 +279,7 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
           type="button"
           disabled={!canConvert || status === 'uploading'}
           onClick={convert}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-rose-600 px-7 py-3 font-black text-white shadow-md transition disabled:cursor-not-allowed disabled:opacity-40"
+          className="rainbow-button inline-flex items-center justify-center gap-2 rounded-lg px-7 py-3 font-black transition disabled:cursor-not-allowed"
         >
           {status === 'uploading' && (
             <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -293,7 +297,7 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
           {result.ok && result.downloadUrl && (
             <a
               href={result.downloadUrl}
-              className="mt-4 inline-flex rounded-lg bg-slate-900 px-5 py-3 font-black text-white shadow-md transition hover:bg-slate-800"
+              className="rainbow-button mt-4 inline-flex rounded-lg px-5 py-3 font-black transition hover:scale-105"
             >
               Download {result.filename || 'file'}
             </a>

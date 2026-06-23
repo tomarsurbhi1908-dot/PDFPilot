@@ -26,28 +26,28 @@ export function BrandMark({ className, size = 'md' }: BrandMarkProps) {
       }}
     >
       <div 
-        className="absolute inset-0 grid place-items-center bg-gradient-to-br from-indigo-500 to-violet-600 ring-1 ring-white/20"
+        className="absolute inset-0 grid place-items-center ring-1 ring-white/30"
         style={{
+          background: 'linear-gradient(135deg, #ff2d55 0%, #ff8a00 20%, #facc15 38%, #22c55e 55%, #06b6d4 70%, #6366f1 85%, #d946ef 100%)',
           borderRadius: 'inherit',
           boxShadow: `
-            2px 2px 0 #4c1d95,
-            4px 4px 0 #4c1d95,
-            6px 6px 0 #4c1d95,
-            8px 8px 0 #2e1065,
-            12px 12px 20px rgba(0,0,0,0.4),
-            inset 0 2px 4px rgba(255,255,255,0.3)
+            2px 2px 0 #0f172a,
+            4px 4px 0 #312e81,
+            7px 7px 0 #701a75,
+            12px 12px 22px rgba(15,23,42,0.34),
+            inset 0 2px 4px rgba(255,255,255,0.42)
           `,
           transform: 'translateZ(10px)',
         }}
       >
         <span 
-          className={cn("font-black tracking-tighter text-white", {
+          className={cn("font-black text-white", {
             'text-sm': size === 'sm',
             'text-3xl': size === 'md',
             'text-4xl': size === 'lg',
           })}
           style={{
-            textShadow: '1px 1px 0px #312e81, 2px 2px 0px #312e81, 3px 3px 4px rgba(0,0,0,0.5)',
+            textShadow: '1px 1px 0px #0f172a, 2px 2px 0px rgba(15,23,42,0.65), 3px 3px 5px rgba(15,23,42,0.45)',
             transform: 'translateZ(20px)',
           }}
         >

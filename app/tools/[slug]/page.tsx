@@ -80,10 +80,10 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       <div className="mx-auto max-w-5xl px-6 pt-10 pb-20">
 
         <section className="mb-8 text-center">
-          <div className="mb-4 inline-flex rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm text-indigo-700 font-medium">
+          <div className="rainbow-chip mb-4 inline-flex rounded-lg px-4 py-2 text-sm font-bold text-slate-800">
             {tool.badge}
           </div>
-          <h1 className="text-4xl font-black sm:text-6xl text-slate-900">{tool.title}</h1>
+          <h1 className="text-4xl font-black text-slate-900 sm:text-6xl">{tool.title}</h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">{tool.description}</p>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-500">
             Files are used only for this conversion and cleared automatically after 1 hour.
@@ -96,21 +96,21 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         <section className="mt-20 max-w-3xl mx-auto space-y-16">
           {tool.longDescription && (
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">About {tool.title}</h2>
+              <h2 className="mb-4 text-2xl font-bold text-slate-900">About <span className="rainbow-text">{tool.title}</span></h2>
               <p className="text-slate-600 leading-relaxed">{tool.longDescription}</p>
             </div>
           )}
 
           {tool.howToGuide && tool.howToGuide.length > 0 && (
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-8 text-center">How to {tool.title}</h2>
+              <h2 className="mb-8 text-center text-2xl font-bold text-slate-900">How to {tool.title}</h2>
               <div className="grid gap-6 sm:grid-cols-3">
                 {tool.howToGuide.map((step, index) => (
-                  <div key={index} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <div className="w-8 h-8 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold mb-4">
+                  <div key={index} className="premium-card rounded-2xl p-6">
+                    <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-950 font-bold text-white">
                       {index + 1}
                     </div>
-                    <h3 className="font-bold text-slate-900 mb-2">{step.title}</h3>
+                    <h3 className="mb-2 font-bold text-slate-900">{step.title}</h3>
                     <p className="text-sm text-slate-600 leading-relaxed">{step.description}</p>
                   </div>
                 ))}
@@ -120,11 +120,11 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
           {tool.faqs && tool.faqs.length > 0 && (
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-8 text-center">Frequently Asked Questions</h2>
+              <h2 className="mb-8 text-center text-2xl font-bold text-slate-900">Frequently Asked Questions</h2>
               <div className="space-y-4">
                 {tool.faqs.map((faq, index) => (
-                  <div key={index} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 className="font-bold text-slate-900 mb-2">{faq.question}</h3>
+                  <div key={index} className="premium-card rounded-2xl p-6">
+                    <h3 className="mb-2 font-bold text-slate-900">{faq.question}</h3>
                     <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
                   </div>
                 ))}
@@ -136,6 +136,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <footer id="privacy" className="mx-auto max-w-5xl border-t border-slate-200 pt-8 pb-6 px-6">
+        <hr className="rainbow-divider mb-8" />
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <Link href="/" className="flex items-center gap-2">
             <BrandMark size="sm" />

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { tools } from '@/lib/tools';
 import { BrandMark } from '@/components/brand-mark';
 import { SiteHeader } from '@/components/site-header';
-import { Combine, Scissors, Image as ImageIcon, Minimize2, FileText, FileEdit, Stamp, Lock, PenTool } from 'lucide-react';
+import { ArrowRight, Combine, Scissors, Image as ImageIcon, Minimize2, FileText, FileEdit, Stamp, Lock, PenTool } from 'lucide-react';
 
 function getToolIcon(slug: string) {
   switch (slug) {
@@ -44,29 +44,27 @@ export default function HomePage() {
       <SiteHeader toolsHref="#tools" ctaHref="#tools" ctaLabel="View tools" />
 
       <section className="relative mx-auto grid max-w-7xl gap-12 px-6 pb-16 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:pt-16">
-        <div className="pointer-events-none absolute left-1/4 top-1/2 -z-10 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/20 opacity-50 blur-[100px]" />
-        <div className="pointer-events-none absolute right-1/4 top-1/4 -z-10 h-[400px] w-[400px] -translate-y-1/2 translate-x-1/4 rounded-full bg-violet-500/20 opacity-50 blur-[100px]" />
         <div>
-          <div className="mb-5 inline-flex rounded-full border border-indigo-200/60 bg-indigo-50/80 px-4 py-2 text-sm font-bold text-indigo-700 backdrop-blur-sm">
+          <div className="rainbow-chip mb-5 inline-flex rounded-full px-4 py-2 text-sm font-bold text-slate-800 backdrop-blur-sm">
             Free PDF tools for everyday documents
           </div>
-          <h1 className="max-w-4xl text-5xl font-black leading-tight sm:text-6xl lg:text-7xl">
-            PDF tools that get the job done fast.
+          <h1 className="max-w-4xl text-4xl font-black leading-tight sm:text-6xl lg:text-7xl">
+            PDF tools that feel <span className="rainbow-text">fast and premium.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
             Use PDFpaglu to merge, split, compress, convert, sign, protect, and watermark PDFs without creating an account.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/tools/merge-pdf" className="rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 px-8 py-3.5 text-center font-bold text-white shadow-md transition hover:scale-105 hover:shadow-lg">
-              Start with Merge PDF
+            <Link href="/tools/merge-pdf" className="rainbow-button inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-3.5 text-center font-bold transition hover:scale-105 sm:w-auto">
+              Start with Merge PDF <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </Link>
-            <Link href="#tools" className="rounded-full border border-slate-200 bg-white/50 px-8 py-3.5 text-center font-bold text-slate-900 shadow-sm backdrop-blur-sm transition hover:bg-slate-50">
+            <Link href="#tools" className="rainbow-frame inline-flex w-full items-center justify-center rounded-full px-8 py-3.5 text-center font-bold text-slate-900 transition hover:-translate-y-0.5 sm:w-auto">
               Browse all tools
             </Link>
           </div>
           <div className="mt-8 grid max-w-2xl gap-4 text-sm text-slate-600 sm:grid-cols-2">
             {features.map((feature) => (
-              <div key={feature.title} className="rounded-xl border border-slate-200/60 bg-white/60 p-5 shadow-sm backdrop-blur-md">
+              <div key={feature.title} className="premium-card rounded-xl p-5">
                 <p className="font-bold text-slate-900">{feature.title}</p>
                 <p className="mt-1 leading-6">{feature.text}</p>
               </div>
@@ -75,19 +73,19 @@ export default function HomePage() {
         </div>
 
         <div className="relative">
-          <div className="relative rounded-2xl border border-slate-200/60 bg-white/80 p-5 shadow-2xl backdrop-blur-xl">
-            <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-6">
+          <div className="rainbow-frame relative rounded-2xl p-5">
+            <div className="rounded-xl border border-white/70 bg-white/75 p-6 shadow-inner backdrop-blur-xl">
               <div className="mb-6 flex items-center justify-between border-b border-slate-200/60 pb-5">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Current job</p>
+                  <p className="text-xs font-semibold uppercase text-slate-500">Current job</p>
                   <p className="mt-1 text-lg font-bold text-slate-900">invoice-files.pdf</p>
                 </div>
-                <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-700">Ready</span>
+                <span className="rainbow-chip rounded-full px-3 py-1 text-sm font-bold text-slate-800">Ready</span>
               </div>
               <div className="space-y-4">
                 {['Upload your files', 'Choose clear settings', 'Download the result'].map((item, index) => (
-                  <div key={item} className="flex items-center gap-4 rounded-xl border border-slate-200/60 bg-white/80 p-4 shadow-sm transition-transform hover:scale-[1.02]">
-                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-900 text-sm font-black text-white shadow-md">{index + 1}</div>
+                  <div key={item} className="premium-card flex items-center gap-4 rounded-xl p-4 transition-transform hover:scale-[1.02]">
+                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-950 text-sm font-black text-white shadow-md">{index + 1}</div>
                     <div>
                       <p className="font-bold text-slate-900">{item}</p>
                       <p className="text-sm text-slate-500">Simple workflow with clear progress.</p>
@@ -95,7 +93,7 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-6 rounded-xl bg-gradient-to-r from-indigo-600 to-rose-600 p-4 text-center font-black text-white shadow-lg transition-transform hover:scale-[1.02]">
+              <div className="rainbow-button mt-6 rounded-xl p-4 text-center font-black transition-transform hover:scale-[1.02]">
                 Download PDF
               </div>
             </div>
@@ -106,7 +104,7 @@ export default function HomePage() {
       <section id="tools" className="relative mx-auto max-w-7xl px-6 pb-20">
         <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-sm font-bold uppercase tracking-wider text-indigo-600">Tools</p>
+            <p className="rainbow-text text-sm font-bold uppercase">Tools</p>
             <h2 className="mt-2 text-3xl font-black sm:text-4xl text-slate-900">Pick a conversion</h2>
           </div>
           <p className="max-w-xl text-slate-600">PDF merge, split, image-to-PDF, compression, Word conversion, watermark, protection and signing in one place.</p>
@@ -117,18 +115,19 @@ export default function HomePage() {
             <Link
               key={tool.slug}
               href={`/tools/${tool.slug}`}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white/60 p-6 shadow-sm backdrop-blur-md transition-all hover:-translate-y-1 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-500/10"
+              className="premium-card group relative overflow-hidden rounded-2xl p-6 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10"
             >
+              <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(100deg,#ff2d55,#ff8a00,#facc15,#22c55e,#06b6d4,#6366f1,#d946ef)] opacity-70 transition group-hover:opacity-100" />
               <div className="mb-6 flex items-center justify-between">
-                <div className="grid h-14 w-14 place-items-center rounded-xl border border-indigo-100/50 bg-gradient-to-br from-indigo-50 to-violet-50 text-lg shadow-inner transition-transform group-hover:scale-110">
+                <div className="rainbow-icon-shell grid h-14 w-14 place-items-center rounded-xl text-lg transition-transform group-hover:scale-110">
                   {getToolIcon(tool.slug)}
                 </div>
-                <span className="rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">{tool.badge}</span>
+                <span className="rainbow-chip rounded-full px-3 py-1 text-xs font-bold text-slate-700">{tool.badge}</span>
               </div>
               <h3 className="text-xl font-black text-slate-900">{tool.title}</h3>
               <p className="mt-3 text-sm leading-6 text-slate-600">{tool.description}</p>
-              <p className="mt-6 flex items-center gap-1 text-sm font-bold text-indigo-600 transition group-hover:text-indigo-700">
-                Open tool <span className="transition-transform group-hover:translate-x-1">→</span>
+              <p className="rainbow-text mt-6 flex items-center gap-2 text-sm font-bold transition">
+                Open tool <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </p>
             </Link>
           ))}
@@ -136,6 +135,7 @@ export default function HomePage() {
       </section>
 
       <footer id="privacy" className="mx-auto max-w-7xl border-t border-slate-200 px-6 py-10">
+        <hr className="rainbow-divider mb-8" />
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-3">
             <BrandMark size="sm" />
