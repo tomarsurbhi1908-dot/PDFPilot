@@ -16,10 +16,7 @@ html {
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at top left, rgba(99, 102, 241, 0.15), transparent 34rem),
-    radial-gradient(circle at top right, rgba(236, 72, 153, 0.1), transparent 28rem),
-    #f8fafc;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 46%, #f8fafc 100%);
   color: #0f172a;
 }
 

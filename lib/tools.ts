@@ -74,8 +74,8 @@ export const tools: ToolConfig[] = [
     accept: 'application/pdf',
     multiple: false,
     endpoint: '/api/tools/compress-pdf',
-    badge: 'Server tool',
-    helpText: 'Requires Ghostscript installed on the server.',
+    badge: 'Reduce size',
+    helpText: 'Upload one PDF and choose the compression level you prefer.',
     output: 'compressed.pdf',
     needsQuality: true
   },
@@ -88,7 +88,7 @@ export const tools: ToolConfig[] = [
     multiple: false,
     endpoint: '/api/tools/word-to-pdf',
     badge: 'DOC / DOCX',
-    helpText: 'Requires LibreOffice installed on the server.',
+    helpText: 'Upload one Word document and convert it into a PDF.',
     output: 'converted.pdf'
   },
   {
@@ -100,7 +100,7 @@ export const tools: ToolConfig[] = [
     multiple: false,
     endpoint: '/api/tools/pdf-to-word',
     badge: 'Experimental',
-    helpText: 'Requires Python and pdf2docx installed. Layout-perfect conversion is hard.',
+    helpText: 'Upload one PDF. Complex layouts may need small edits after conversion.',
     output: 'converted.docx',
     experimental: true
   },
