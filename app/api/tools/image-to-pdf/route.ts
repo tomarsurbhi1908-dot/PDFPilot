@@ -1,8 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
-import { NextResponse } from 'next/server';
-import { writeFile } from 'node:fs/promises';
-import { assertMaxSize, assertMime, isUploadFile, jsonError } from '@/lib/server/http';
-import { cleanupOldJobs, createJobDirs, createJobId, downloadUrl, ensureBaseDirs, outputPath } from '@/lib/server/storage';
+import { assertMaxSize, assertMime, fileResponse, isUploadFile, jsonError } from '@/lib/server/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -12,9 +9,6 @@ const MARGIN = 32;
 
 export async function POST(request: Request) {
   try {
-    await ensureBaseDirs();
-    await cleanupOldJobs();
-
     const formData = await request.formData();
     const files = formData.getAll('files').filter(isUploadFile);
 
@@ -48,17 +42,8 @@ export async function POST(request: Request) {
       });
     }
 
-    const jobId = createJobId();
-    await createJobDirs(jobId);
     const filename = 'images.pdf';
-    await writeFile(outputPath(jobId, filename), Buffer.from(await pdf.save()));
-
-    return NextResponse.json({
-      ok: true,
-      filename,
-      downloadUrl: downloadUrl(jobId, filename),
-      message: 'Images converted to PDF successfully.'
-    });
+    return fileResponse(await pdf.save(), filename, 'Images converted to PDF successfully.');
   } catch (error) {
     return jsonError(error instanceof Error ? error.message : 'Unable to convert images.', 500);
   }

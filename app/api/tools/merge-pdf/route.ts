@@ -1,17 +1,11 @@
 import { PDFDocument } from 'pdf-lib';
-import { NextResponse } from 'next/server';
-import { assertMaxSize, assertMime, isUploadFile, jsonError } from '@/lib/server/http';
-import { cleanupOldJobs, createJobDirs, createJobId, downloadUrl, ensureBaseDirs, outputPath } from '@/lib/server/storage';
-import { writeFile } from 'node:fs/promises';
+import { assertMaxSize, assertMime, fileResponse, isUploadFile, jsonError } from '@/lib/server/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    await ensureBaseDirs();
-    await cleanupOldJobs();
-
     const formData = await request.formData();
     const files = formData.getAll('files').filter(isUploadFile);
 
@@ -24,9 +18,6 @@ export async function POST(request: Request) {
       assertMime(file, ['application/pdf', '.pdf'], 'PDF files');
     });
 
-    const jobId = createJobId();
-    await createJobDirs(jobId);
-
     const merged = await PDFDocument.create();
 
     for (const file of files) {
@@ -38,14 +29,7 @@ export async function POST(request: Request) {
 
     const outputBytes = await merged.save();
     const filename = 'merged.pdf';
-    await writeFile(outputPath(jobId, filename), Buffer.from(outputBytes));
-
-    return NextResponse.json({
-      ok: true,
-      filename,
-      downloadUrl: downloadUrl(jobId, filename),
-      message: 'PDFs merged successfully.'
-    });
+    return fileResponse(outputBytes, filename, 'PDFs merged successfully.');
   } catch (error) {
     return jsonError(error instanceof Error ? error.message : 'Unable to merge PDFs.', 500);
   }

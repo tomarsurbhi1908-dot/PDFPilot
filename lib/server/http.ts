@@ -26,3 +26,46 @@ export function assertMime(file: File, allowed: string[], label: string) {
     throw new Error(`Invalid file type. Please upload ${label}.`);
   }
 }
+
+const MIME: Record<string, string> = {
+  '.pdf': 'application/pdf',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  '.doc': 'application/msword',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png'
+};
+
+function safeDownloadName(name: string) {
+  return name
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9._-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^[-.]+|[-.]+$/g, '')
+    .slice(0, 120) || 'download';
+}
+
+function contentTypeFor(filename: string) {
+  const ext = filename.slice(filename.lastIndexOf('.')).toLowerCase();
+  return MIME[ext] || 'application/octet-stream';
+}
+
+function toArrayBuffer(bytes: Uint8Array | ArrayBuffer) {
+  if (bytes instanceof ArrayBuffer) return bytes;
+  return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+}
+
+export function fileResponse(bytes: Uint8Array | ArrayBuffer, filename: string, message: string) {
+  const safeFilename = safeDownloadName(filename);
+
+  return new NextResponse(toArrayBuffer(bytes), {
+    headers: {
+      'Content-Type': contentTypeFor(safeFilename),
+      'Content-Disposition': `attachment; filename="${safeFilename}"`,
+      'Cache-Control': 'no-store',
+      'X-File-Name': encodeURIComponent(safeFilename),
+      'X-Message': encodeURIComponent(message)
+    }
+  });
+}

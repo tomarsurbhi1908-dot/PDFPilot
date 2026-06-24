@@ -1,17 +1,11 @@
 import { PDFDocument, rgb, degrees } from 'pdf-lib';
-import { NextResponse } from 'next/server';
-import { assertMaxSize, assertMime, isUploadFile, jsonError } from '@/lib/server/http';
-import { cleanupOldJobs, createJobDirs, createJobId, downloadUrl, ensureBaseDirs, outputPath } from '@/lib/server/storage';
-import { writeFile } from 'node:fs/promises';
+import { assertMaxSize, assertMime, fileResponse, isUploadFile, jsonError } from '@/lib/server/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    await ensureBaseDirs();
-    await cleanupOldJobs();
-
     const formData = await request.formData();
     const file = formData.get('file');
     const text = (formData.get('text') as string) || 'CONFIDENTIAL';
@@ -22,9 +16,6 @@ export async function POST(request: Request) {
 
     assertMaxSize(file, 50);
     assertMime(file, ['application/pdf', '.pdf'], 'a PDF file');
-
-    const jobId = createJobId();
-    await createJobDirs(jobId);
 
     const bytes = await file.arrayBuffer();
     const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
@@ -44,14 +35,7 @@ export async function POST(request: Request) {
 
     const outputBytes = await pdfDoc.save();
     const filename = 'watermarked.pdf';
-    await writeFile(outputPath(jobId, filename), Buffer.from(outputBytes));
-
-    return NextResponse.json({
-      ok: true,
-      filename,
-      downloadUrl: downloadUrl(jobId, filename),
-      message: 'Watermark added successfully.'
-    });
+    return fileResponse(outputBytes, filename, 'Watermark added successfully.');
   } catch (error) {
     return jsonError(error instanceof Error ? error.message : 'Unable to add watermark.', 500);
   }

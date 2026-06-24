@@ -1,17 +1,11 @@
 import { PDFDocument } from 'pdf-lib';
-import { NextResponse } from 'next/server';
-import { assertMaxSize, assertMime, isUploadFile, jsonError } from '@/lib/server/http';
-import { cleanupOldJobs, createJobDirs, createJobId, downloadUrl, ensureBaseDirs, outputPath } from '@/lib/server/storage';
-import { writeFile } from 'node:fs/promises';
+import { assertMaxSize, assertMime, fileResponse, isUploadFile, jsonError } from '@/lib/server/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    await ensureBaseDirs();
-    await cleanupOldJobs();
-
     const formData = await request.formData();
     const file = formData.get('file');
     const signature = formData.get('signature');
@@ -24,9 +18,6 @@ export async function POST(request: Request) {
     
     assertMaxSize(signature, 5);
     assertMime(signature, ['image/jpeg', 'image/png', '.jpg', '.jpeg', '.png'], 'a PNG or JPG image');
-
-    const jobId = createJobId();
-    await createJobDirs(jobId);
 
     const pdfBytes = await file.arrayBuffer();
     const signatureBytes = await signature.arrayBuffer();
@@ -59,14 +50,7 @@ export async function POST(request: Request) {
 
     const outputBytes = await pdfDoc.save();
     const filename = 'signed.pdf';
-    await writeFile(outputPath(jobId, filename), Buffer.from(outputBytes));
-
-    return NextResponse.json({
-      ok: true,
-      filename,
-      downloadUrl: downloadUrl(jobId, filename),
-      message: 'PDF signed successfully.'
-    });
+    return fileResponse(outputBytes, filename, 'PDF signed successfully.');
   } catch (error) {
     return jsonError(error instanceof Error ? error.message : 'Unable to sign PDF.', 500);
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDown, ArrowUp, UploadCloud, X } from 'lucide-react';
 import type { ToolConfig } from '@/lib/tools';
 import { prettyBytes } from '@/lib/utils';
@@ -11,6 +11,7 @@ type Result = {
   downloadUrl?: string;
   message?: string;
   error?: string;
+  isObjectUrl?: boolean;
 };
 
 const MAX_SIZE_MB: Record<string, number> = {
@@ -33,6 +34,14 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
   const signatureRef = useRef<HTMLInputElement | null>(null);
   
   const maxSize = MAX_SIZE_MB[tool.slug] || 50;
+
+  useEffect(() => {
+    return () => {
+      if (result?.isObjectUrl && result.downloadUrl) {
+        URL.revokeObjectURL(result.downloadUrl);
+      }
+    };
+  }, [result]);
 
   const canConvert = useMemo(() => {
     let valid = false;
@@ -72,6 +81,15 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
     });
   }
 
+  function decodeHeader(value: string | null) {
+    if (!value) return undefined;
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  }
+
   async function convert() {
     if (!canConvert) return;
     setStatus('uploading');
@@ -94,9 +112,32 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
         method: 'POST',
         body: form
       });
-      const data = (await response.json()) as Result;
-      setResult(data);
-      setStatus(data.ok ? 'ready' : 'error');
+
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const data = (await response.json()) as Result;
+        setResult(data);
+        setStatus(data.ok ? 'ready' : 'error');
+        return;
+      }
+
+      if (!response.ok) {
+        setResult({ ok: false, error: 'The server could not create a result. Please try again.' });
+        setStatus('error');
+        return;
+      }
+
+      const blob = await response.blob();
+      const filename = decodeHeader(response.headers.get('x-file-name')) || tool.output;
+      const message = decodeHeader(response.headers.get('x-message')) || `${filename} is ready.`;
+      setResult({
+        ok: true,
+        filename,
+        message,
+        downloadUrl: URL.createObjectURL(blob),
+        isObjectUrl: true
+      });
+      setStatus('ready');
     } catch {
       setResult({ ok: false, error: 'Something went wrong. Please try again.' });
       setStatus('error');
@@ -297,6 +338,7 @@ export default function ToolClient({ tool }: { tool: ToolConfig }) {
           {result.ok && result.downloadUrl && (
             <a
               href={result.downloadUrl}
+              download={result.filename || tool.output}
               className="rainbow-button mt-4 inline-flex rounded-lg px-5 py-3 font-black transition hover:scale-105"
             >
               Download {result.filename || 'file'}
