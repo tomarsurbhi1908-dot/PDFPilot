@@ -109,8 +109,8 @@ export const tools: ToolConfig[] = [
     title: 'Compress PDF',
     seoTitle: 'Compress PDF Online Free - Reduce PDF File Size | PDFpaglu',
     shortTitle: 'Compress',
-    description: 'Reduce PDF file size using a server-side compression engine.',
-    longDescription: 'Are your PDF files too large to email or upload? Use our free PDF compressor to drastically reduce file sizes without compromising visual quality. Our advanced server-side compression engine optimizes images and fonts inside your PDF to give you the smallest possible file.',
+    description: 'Optimize PDF structure to reduce file size when possible.',
+    longDescription: 'Are your PDF files too large to email or upload? Use our free PDF compressor to optimize the PDF structure directly in the app runtime. Some files are already compact, but many PDFs can be cleaned up and saved smaller without installing software.',
     howToGuide: [
       { title: 'Upload PDF', description: 'Select the heavy PDF document you want to compress.' },
       { title: 'Select Compression Level', description: 'Choose between standard compression (good quality) or extreme compression (smallest size).' },
@@ -133,22 +133,22 @@ export const tools: ToolConfig[] = [
     title: 'Word to PDF',
     seoTitle: 'Convert Word to PDF Online Free - DOCX to PDF | PDFpaglu',
     shortTitle: 'Word to PDF',
-    description: 'Convert DOC and DOCX files to PDF using LibreOffice headless.',
-    longDescription: 'Easily convert your Microsoft Word documents (DOC or DOCX) into high-quality PDFs. Converting to PDF ensures that your document\'s formatting, fonts, and layout stay exactly the same when viewed on any device or printed.',
+    description: 'Convert DOCX text into a clean downloadable PDF.',
+    longDescription: 'Easily convert text from Microsoft Word DOCX documents into a clean PDF. This runtime-safe converter is best for text documents; complex Word layouts, images, and legacy DOC files may require a full Office conversion engine.',
     howToGuide: [
-      { title: 'Upload Word Document', description: 'Select your DOC or DOCX file to upload.' },
-      { title: 'Processing', description: 'Our secure servers will perfectly convert your document while maintaining its layout.' },
+      { title: 'Upload Word Document', description: 'Select your DOCX file to upload.' },
+      { title: 'Processing', description: 'We extract readable text and place it into a clean PDF document.' },
       { title: 'Download PDF', description: 'Once converted, your new PDF is ready to download instantly.' }
     ],
     faqs: [
       { question: 'Will my formatting change during conversion?', answer: 'No, our converter preserves your original formatting, fonts, and images exactly as they appear in Word.' },
       { question: 'Do I need Microsoft Word installed?', answer: 'No, everything is processed on our servers. You do not need any Office software installed on your device.' }
     ],
-    accept: '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    accept: '.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     multiple: false,
     endpoint: '/api/tools/word-to-pdf',
-    badge: 'DOC / DOCX',
-    helpText: 'Upload one Word document and convert it into a PDF.',
+    badge: 'DOCX',
+    helpText: 'Upload one DOCX document and convert its text into a PDF.',
     output: 'converted.pdf'
   },
   {
@@ -156,16 +156,16 @@ export const tools: ToolConfig[] = [
     title: 'PDF to Word',
     seoTitle: 'Convert PDF to Word Online Free - PDF to DOCX | PDFpaglu',
     shortTitle: 'PDF to Word',
-    description: 'Convert PDF into DOCX, with layout review recommended.',
-    longDescription: 'Turn your PDF files back into editable Microsoft Word documents (DOCX). PDF files use fixed layouts, so the converted document may need small formatting adjustments after download, especially for complex designs.',
+    description: 'Extract selectable PDF text into a DOCX document.',
+    longDescription: 'Turn selectable text from PDF files into editable Microsoft Word documents (DOCX). PDF files use fixed layouts, so extracted text may need formatting adjustments after download, especially for scans or complex designs.',
     howToGuide: [
       { title: 'Upload PDF', description: 'Select the PDF file you need to edit in Word.' },
       { title: 'Convert', description: 'Wait a few seconds while we extract the text and formatting.' },
       { title: 'Download Word File', description: 'Download your editable DOCX file.' }
     ],
     faqs: [
-      { question: 'Is the converted Word document editable?', answer: 'Yes! The resulting DOCX file can be opened in Microsoft Word or Google Docs and edited freely.' },
-      { question: 'Will complex layouts look perfect?', answer: 'Simple text documents usually convert cleanly, but complex layouts with tables, columns, or custom graphics may require minor manual adjustments in Word.' }
+      { question: 'Is the converted Word document editable?', answer: 'Yes. The resulting DOCX file can be opened in Microsoft Word or Google Docs and edited freely.' },
+      { question: 'Will complex layouts look perfect?', answer: 'Simple text documents usually convert cleanly, but scanned PDFs, custom fonts, tables, columns, or graphics may require manual adjustment in Word.' }
     ],
     accept: 'application/pdf',
     multiple: false,

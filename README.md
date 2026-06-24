@@ -7,9 +7,11 @@ A premium PDF conversion website starter built with Next.js, TypeScript, Tailwin
 - Merge PDF
 - Split PDF by page ranges
 - Image to PDF for JPG/PNG
-- Compress PDF using Ghostscript
-- Word to PDF using LibreOffice headless
-- PDF to Word using Python + pdf2docx, experimental
+- Compress PDF using in-process PDF optimization
+- Word to PDF for DOCX text documents
+- PDF to Word text extraction, experimental
+- Password protect PDF
+- Sign PDF
 
 ## Run locally
 
@@ -24,52 +26,13 @@ Open:
 http://localhost:3000
 ```
 
-## System dependencies for heavy conversions
+## Runtime notes
 
-Merge PDF, Split PDF and Image to PDF work with the Node dependency `pdf-lib`.
+The core PDF tools run in-process with JavaScript dependencies, so they do not need Ghostscript, LibreOffice, qpdf, Python, or temporary filesystem writes.
 
-For Compress PDF, install Ghostscript:
+Word to PDF supports DOCX text extraction. Legacy `.doc` files and pixel-perfect Office layout conversion require a dedicated Office conversion worker.
 
-```bash
-# macOS
-brew install ghostscript
-
-# Ubuntu/Debian
-sudo apt-get update
-sudo apt-get install -y ghostscript
-```
-
-For Word to PDF, install LibreOffice:
-
-```bash
-# macOS
-brew install --cask libreoffice
-
-# Ubuntu/Debian
-sudo apt-get update
-sudo apt-get install -y libreoffice
-```
-
-For PDF to Word, install Python dependency:
-
-```bash
-pip install pdf2docx
-```
-
-Optional environment variables:
-
-```bash
-GS_BINARY=gs
-LIBREOFFICE_BINARY=soffice
-PYTHON_BINARY=python3
-PDF_TOOLS_TMP_DIR=.tmp
-```
-
-On macOS, if `soffice` is not found, use:
-
-```bash
-LIBREOFFICE_BINARY=/Applications/LibreOffice.app/Contents/MacOS/soffice npm run dev
-```
+PDF to Word extracts selectable PDF text into DOCX. Scanned PDFs and complex fixed-layout documents may need OCR or a commercial conversion engine for best results.
 
 ## Routes
 
@@ -83,6 +46,9 @@ Frontend pages:
 /tools/compress-pdf
 /tools/word-to-pdf
 /tools/pdf-to-word
+/tools/watermark-pdf
+/tools/protect-pdf
+/tools/sign-pdf
 ```
 
 API routes:
@@ -94,12 +60,14 @@ POST /api/tools/image-to-pdf
 POST /api/tools/compress-pdf
 POST /api/tools/word-to-pdf
 POST /api/tools/pdf-to-word
-GET  /api/download/[jobId]/[filename]
+POST /api/tools/watermark-pdf
+POST /api/tools/protect-pdf
+POST /api/tools/sign-pdf
 ```
 
 ## File privacy
 
-Uploaded and converted files are stored temporarily in `.tmp` by default. The app cleans old jobs opportunistically when a new conversion request arrives.
+Uploaded files are processed in memory by the API route and returned directly as downloads.
 
 For production, you should add:
 
@@ -108,8 +76,8 @@ For production, you should add:
 - Better job queue for large files
 - Virus scanning
 - A cron cleanup job
-- Cloud object storage with short expiry links
-- Worker containers for LibreOffice/Ghostscript conversions
+- Cloud object storage with short expiry links if you later add asynchronous jobs
+- Worker containers for OCR or pixel-perfect Office conversions
 
 ## Important notes
 
@@ -117,5 +85,4 @@ PDF to Word conversion is never perfect because PDF is a fixed-layout format. Ke
 
 ## Deployment recommendation
 
-Do not deploy LibreOffice/Ghostscript conversions to a tiny serverless function. Use Docker or a VPS/container worker.
-
+The included routes are designed to avoid forbidden serverless operations such as spawning binaries or writing temporary conversion files. Use Docker or a VPS/container worker only if you add full LibreOffice, Ghostscript, OCR, or commercial conversion engines later.

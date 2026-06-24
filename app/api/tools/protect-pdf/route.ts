@@ -1,19 +1,12 @@
-import { NextResponse } from 'next/server';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-import { assertMaxSize, assertMime, isUploadFile, jsonError } from '@/lib/server/http';
-import { cleanupOldJobs, createJobDirs, createJobId, downloadUrl, ensureBaseDirs, outputPath, saveUploadedFile } from '@/lib/server/storage';
+import { PDFDocument } from 'pdf-lib';
+import { assertMaxSize, assertMime, fileResponse, isUploadFile, jsonError } from '@/lib/server/http';
+import { encryptPdfBytes } from '@/lib/server/conversions';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const run = promisify(execFile);
-
 export async function POST(request: Request) {
   try {
-    await ensureBaseDirs();
-    await cleanupOldJobs();
-
     const formData = await request.formData();
     const file = formData.get('file');
     const password = String(formData.get('password') || '');
@@ -23,35 +16,12 @@ export async function POST(request: Request) {
     assertMaxSize(file, 80);
     assertMime(file, ['application/pdf', '.pdf'], 'a PDF file');
 
-    const jobId = createJobId();
-    const { uploadDir } = await createJobDirs(jobId);
-    const input = await saveUploadedFile(file, uploadDir);
+    const inputBytes = new Uint8Array(await file.arrayBuffer());
+    const pdf = await PDFDocument.load(inputBytes, { ignoreEncryption: true });
+    const normalizedBytes = await pdf.save({ useObjectStreams: false });
+    const outputBytes = encryptPdfBytes(normalizedBytes, password);
     const filename = 'protected.pdf';
-    const output = outputPath(jobId, filename);
-
-    const binary = process.env.QPDF_BINARY || 'qpdf';
-    const args = [
-      '--encrypt',
-      password,
-      password,
-      '256',
-      '--',
-      input.path,
-      output
-    ];
-
-    try {
-      await run(binary, args, { timeout: 60000 });
-    } catch {
-      return jsonError('qpdf is not installed or not available. Install it or set QPDF_BINARY.', 500);
-    }
-
-    return NextResponse.json({
-      ok: true,
-      filename,
-      downloadUrl: downloadUrl(jobId, filename),
-      message: 'PDF protected successfully.'
-    });
+    return fileResponse(outputBytes, filename, 'PDF protected successfully.');
   } catch (error) {
     return jsonError(error instanceof Error ? error.message : 'Unable to protect PDF.', 500);
   }

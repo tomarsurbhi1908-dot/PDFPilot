@@ -1,64 +1,38 @@
-import { NextResponse } from 'next/server';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-import { assertMaxSize, assertMime, isUploadFile, jsonError } from '@/lib/server/http';
-import { cleanupOldJobs, createJobDirs, createJobId, downloadUrl, ensureBaseDirs, outputPath, saveUploadedFile } from '@/lib/server/storage';
+import { PDFDocument } from 'pdf-lib';
+import { assertMaxSize, assertMime, fileResponse, isUploadFile, jsonError } from '@/lib/server/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const run = promisify(execFile);
-const QUALITY_MAP: Record<string, string> = {
-  screen: '/screen',
-  ebook: '/ebook',
-  printer: '/printer',
-  prepress: '/prepress'
+const QUALITY_LABELS: Record<string, string> = {
+  screen: 'smallest file',
+  ebook: 'balanced',
+  printer: 'high quality',
+  prepress: 'best quality'
 };
 
 export async function POST(request: Request) {
   try {
-    await ensureBaseDirs();
-    await cleanupOldJobs();
-
     const formData = await request.formData();
     const file = formData.get('file');
     const qualityInput = String(formData.get('quality') || 'ebook');
-    const quality = QUALITY_MAP[qualityInput] || '/ebook';
+    const quality = QUALITY_LABELS[qualityInput] || QUALITY_LABELS.ebook;
 
     if (!isUploadFile(file)) return jsonError('Please upload one PDF file.');
     assertMaxSize(file, 80);
     assertMime(file, ['application/pdf', '.pdf'], 'a PDF file');
 
-    const jobId = createJobId();
-    const { uploadDir } = await createJobDirs(jobId);
-    const input = await saveUploadedFile(file, uploadDir);
+    const inputBytes = new Uint8Array(await file.arrayBuffer());
+    const pdf = await PDFDocument.load(inputBytes, { ignoreEncryption: true });
+    const optimizedBytes = await pdf.save({ useObjectStreams: true });
     const filename = 'compressed.pdf';
-    const output = outputPath(jobId, filename);
+    const outputBytes = optimizedBytes.length < inputBytes.length ? optimizedBytes : inputBytes;
+    const saved = Math.max(0, inputBytes.length - outputBytes.length);
+    const message = saved > 0
+      ? `PDF compressed successfully using ${quality} optimization.`
+      : 'PDF was already compact, so the original file was returned without server-side OS tools.';
 
-    const binary = process.env.GS_BINARY || 'gs';
-    const args = [
-      '-sDEVICE=pdfwrite',
-      '-dCompatibilityLevel=1.4',
-      `-dPDFSETTINGS=${quality}`,
-      '-dNOPAUSE',
-      '-dQUIET',
-      '-dBATCH',
-      `-sOutputFile=${output}`,
-      input.path
-    ];
-
-    try {
-      await run(binary, args, { timeout: 120000, maxBuffer: 1024 * 1024 * 10 });
-    } catch {
-      return jsonError('Ghostscript is not installed or not available. Install it or set GS_BINARY.', 500);
-    }
-
-    return NextResponse.json({
-      ok: true,
-      filename,
-      downloadUrl: downloadUrl(jobId, filename),
-      message: 'PDF compressed successfully.'
-    });
+    return fileResponse(outputBytes, filename, message);
   } catch (error) {
     return jsonError(error instanceof Error ? error.message : 'Unable to compress PDF.', 500);
   }
